@@ -1,4 +1,4 @@
-# Peliculas
+# Art Museum Chicago API 
 
 Este es el proyecto de evaluación 2.0 para Patagonian con la integración de API Chicago Art Museum. Compatible con IOS, Andriod y web.
 
