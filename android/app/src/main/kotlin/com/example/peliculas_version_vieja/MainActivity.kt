@@ -1,4 +1,4 @@
-package com.example.peliculas_version_vieja
+package com.example.Art_Chicago_Api
 
 import io.flutter.embedding.android.FlutterActivity
 

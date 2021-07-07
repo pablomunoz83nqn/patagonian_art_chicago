@@ -1,6 +1,6 @@
 {
-    "name": "peliculas_version_vieja",
-    "short_name": "peliculas_version_vieja",
+    "name": "Art_Chicago_Api",
+    "short_name": "Art_Chicago_Api",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

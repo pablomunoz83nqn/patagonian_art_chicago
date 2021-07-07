@@ -1,33 +1,40 @@
+
 import 'package:flutter/material.dart';
-import 'package:peliculas/src/providers/peliculas_provider.dart';
+
+import 'package:peliculas/src/models/arworksModel.dart';
+
+import 'package:peliculas/src/providers/artworks_provider.dart';
 import 'package:peliculas/src/search/search_delegate.dart';
 
-import 'package:peliculas/src/widgets/card_swiper_widget.dart';
-import 'package:peliculas/src/widgets/movie_horizontal.dart';
+import 'package:peliculas/src/widgets/artwork_horizontal.dart';
 
 class HomePage extends StatelessWidget {
 
-  final peliculasProvider = new PeliculasProvider();
+  final artworksProvider = new ArtworksProvider();
+ 
+
 
   @override
   Widget build(BuildContext context) {
 
-    peliculasProvider.getPopulares();
+   
 
+    artworksProvider.getPopulares();
+  
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Películas en cines'),
-        backgroundColor: Colors.indigoAccent,
+        title: Text('Chicago Art Museum Online', style: TextStyle(color: Colors.amber[900]),),
+        backgroundColor: Colors.amber[50],
         actions: <Widget>[
           IconButton(
-            icon: Icon( Icons.search ),
+            icon: Icon( Icons.search, color: Colors.amber[900], size: 35.0, ),
             onPressed: () {
               showSearch(
                 context: context, 
                 delegate: DataSearch(),
-                // query: 'Hola'
+               
                 );
             },
           )
@@ -39,9 +46,11 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
               SizedBox(height: 10,),
-              _swiperTarjetas(),
+        
+              _pagination(context),
               SizedBox(height: 10,),
-              _footer(context)
+               
+
             ],
           ),
         ),
@@ -50,35 +59,11 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _swiperTarjetas() {
-
-    return FutureBuilder(
-      future: peliculasProvider.getEnCines(),
-      builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-        
-        if ( snapshot.hasData ) {
-          return CardSwiper( peliculas: snapshot.data );
-        } else {
-          return Container(
-            height: 400.0,
-            child: Center(
-              child: CircularProgressIndicator()
-            )
-          );
-        }
-        
-      },
-    );
+  
 
 
-
+  Widget _pagination(BuildContext context){
     
-
-
-  }
-
-
-  Widget _footer(BuildContext context){
 
     return Container(
       width: double.infinity,
@@ -88,21 +73,28 @@ class HomePage extends StatelessWidget {
         children: <Widget>[
           Container(
             padding: EdgeInsets.only(left: 20.0),
-            child: Text('Populares', style: Theme.of(context).textTheme.subtitle1  )
+            child: Text('Featured Artworks', style: Theme.of(context).textTheme.subtitle1  )
           ),
           SizedBox(height: 5.0),
 
           StreamBuilder(
-            stream: peliculasProvider.popularesStream,
+            stream: artworksProvider.popularesStream,
             builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
               
+               if (snapshot.hasError) {
+             Text('Error Retrieving information, please reload');
+            
+               }
+          
+
               if ( snapshot.hasData ) {
-                return MovieHorizontal( 
-                  peliculas: snapshot.data,
-                  siguientePagina: peliculasProvider.getPopulares,
+                return ArtworkHorizontal( 
+                  artworks: snapshot.data as List<Artwork>?,
+                  
+                  siguientePagina: artworksProvider.getPopulares,
                 );
               } else {
-                return Center(child: CircularProgressIndicator());
+                return Center(child: Text('Error Retrieving information, please reload'));
               }
             },
           ),
@@ -113,5 +105,8 @@ class HomePage extends StatelessWidget {
 
 
   }
+
+
+  
 
 }

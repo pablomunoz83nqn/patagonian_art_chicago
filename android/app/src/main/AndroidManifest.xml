@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.peliculas_version_vieja">
+    package="com.example.Art_Chicago_Api">
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="peliculas_version_vieja"
+        android:label="Art_Chicago_Api"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

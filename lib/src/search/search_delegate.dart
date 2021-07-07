@@ -1,28 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:peliculas/src/models/pelicula_model.dart';
-import 'package:peliculas/src/providers/peliculas_provider.dart';
+
+import 'package:peliculas/src/models/arworksModel.dart';
+import 'package:peliculas/src/providers/artworks_provider.dart';
 
 
 class DataSearch extends SearchDelegate {
 
   String seleccion = '';
-  final peliculasProvider = new PeliculasProvider();
+  final artworksProvider = new ArtworksProvider();
 
-  final peliculas = [
-    'Spiderman',
-    'Aquaman',
-    'Batman',
-    'Shazam!',
-    'Ironman',
-    'Capitan America',
-    'Superman',
-    'Ironman 2',
-    'Ironman 3',
-    'Ironman 4',
-    'Ironman 5',
-  ];
 
-  final peliculasRecientes = [
+
+  final artworksRecientes = [
     'Spiderman',
     'Capitan America'
   ];
@@ -58,13 +47,39 @@ class DataSearch extends SearchDelegate {
   @override
   Widget buildResults(BuildContext context) {
     // Crea los resultados que vamos a mostrar
-    return Center(
-      child: Container(
-        height: 100.0,
-        width: 100.0,
-        color: Colors.blueAccent,
-        child: Text(seleccion),
-      ),
+    if ( query.isEmpty ) {
+      return Container();
+    }
+
+    return FutureBuilder(
+      future: artworksProvider.buscarArtwork(query),
+      builder: (BuildContext context, AsyncSnapshot<List<Artwork>> snapshot) {
+
+          if( snapshot.hasData ) {
+            
+            final artworks = snapshot.data!;
+
+            return ListView(
+              children: artworks.map( (artwork) {
+                  return ListTile(
+                    leading: Icon(Icons.art_track),
+                    subtitle: Text( artwork.title.toString() ),
+                    onTap: (){
+                      close( context, null);
+                      
+                      Navigator.pushNamed(context, 'detalle', arguments: artwork);
+                    },
+                  );
+              }).toList()
+            );
+
+          } else {
+            return Center(
+              child: CircularProgressIndicator()
+            );
+          }
+
+      },
     );
   }
 
@@ -76,28 +91,22 @@ class DataSearch extends SearchDelegate {
     }
 
     return FutureBuilder(
-      future: peliculasProvider.buscarPelicula(query),
-      builder: (BuildContext context, AsyncSnapshot<List<Pelicula>> snapshot) {
+      future: artworksProvider.buscarArtwork(query),
+      builder: (BuildContext context, AsyncSnapshot<List<Artwork>> snapshot) {
 
           if( snapshot.hasData ) {
             
-            final peliculas = snapshot.data;
+            final artworks = snapshot.data!;
 
             return ListView(
-              children: peliculas.map( (pelicula) {
+              children: artworks.map( (artwork) {
                   return ListTile(
-                    leading: FadeInImage(
-                      image: NetworkImage( pelicula.getPosterImg() ),
-                      placeholder: AssetImage('assets/img/no-image.jpg'),
-                      width: 50.0,
-                      fit: BoxFit.contain,
-                    ),
-                    title: Text( pelicula.title ),
-                    subtitle: Text( pelicula.originalTitle ),
+                    leading: Icon(Icons.art_track),
+                    subtitle: Text( artwork.title.toString() ),
                     onTap: (){
                       close( context, null);
-                      pelicula.uniqueId = '';
-                      Navigator.pushNamed(context, 'detalle', arguments: pelicula);
+                      
+                      Navigator.pushNamed(context, 'detalle', arguments: artwork);
                     },
                   );
               }).toList()
@@ -115,31 +124,7 @@ class DataSearch extends SearchDelegate {
 
   }
 
-  // @override
-  // Widget buildSuggestions(BuildContext context) {
-  //   // Son las sugerencias que aparecen cuando la persona escribe
-
-  //   final listaSugerida = ( query.isEmpty ) 
-  //                           ? peliculasRecientes
-  //                           : peliculas.where( 
-  //                             (p)=> p.toLowerCase().startsWith(query.toLowerCase()) 
-  //                           ).toList();
-
-
-  //   return ListView.builder(
-  //     itemCount: listaSugerida.length,
-  //     itemBuilder: (context, i) {
-  //       return ListTile(
-  //         leading: Icon(Icons.movie),
-  //         title: Text(listaSugerida[i]),
-  //         onTap: (){
-  //           seleccion = listaSugerida[i];
-  //           showResults( context );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
+ 
 
 }
 
